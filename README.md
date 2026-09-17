@@ -17,22 +17,23 @@ Rapid Quiz, kullanıcıların seçtikleri kategorilerde hızla yarışıp puan t
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma (Geliştirici Ortamı)
+## 🚀 Kurulum ve Çalıştırma (Docker ile)
 
-Projeyi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyin. (Bilgisayarınızda Node.js kurulu olmalıdır).
+Projeyi bilgisayarınızda çalıştırmak için Node.js kurmanıza bile gerek yoktur. Proje tamamen Dockerize edilmiştir.
 
-### 1. Bağımlılıkları Yükleme
-Proje klasörüne girip gerekli kütüphaneleri indirin:
+### 1. Docker ile Ayağa Kaldırma
+Proje klasörüne girip tek komutla sunucuyu başlatın:
 ```bash
-npm install
+docker-compose up -d --build
 ```
 
-### 2. Geliştirici Sunucusunu Başlatma
-Hızlı geliştirme sunucusunu ayağa kaldırmak için:
-```bash
-npm run dev
-```
-Bu komut sonrasında proje tarayıcınızda otomatik olarak çalışacaktır (Genellikle 👉 `http://localhost:5173`).
+Bu komut:
+- Gerekli tüm Node.js kütüphanelerini (npm install) sanal ortamda kendi kendine kurar.
+- Geliştirici sunucusunu (Vite) başlatır.
+
+### 2. Projeyi Görüntüleme
+İşlem tamamlandıktan sonra tarayıcınızdan şu adrese gidin:
+👉 **http://localhost:5173**
 
 ### 3. Backend (API) Bağlantısı
 Frontend projesinin sorunsuz çalışması için [RapidQuizBackend](https://github.com/ahmetakaslan1/RapidQuizBackend) projesinin arka planda çalışıyor olması gerekmektedir (Varsayılan olarak `http://localhost:8000` adresinden API'a bağlanır). API adresini değiştirmek isterseniz `src/services/api.js` veya varsa `.env` dosyası üzerinden ayar yapabilirsiniz.
