@@ -15,7 +15,7 @@ const correctOption = ref(null)
 
 let startTime = 0
 let animationFrameId = null
-const TIME_LIMIT_MS = 9000
+const TIME_LIMIT_MS = 10000
 
 const currentQuestion = computed(() => {
   return gameState.questions[currentIndex.value]

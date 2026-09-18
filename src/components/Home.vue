@@ -6,6 +6,9 @@ import { gameState } from '../store'
 
 const router = useRouter()
 const categories = ref([])
+const allOthers = ref([])
+const dailyCat = ref(null)
+const otherIndex = ref(0)
 const loading = ref(false)
 const errorMsg = ref('')
 
@@ -33,12 +36,35 @@ const getTheme = (name) => {
 
 onMounted(async () => {
   try {
-    categories.value = await api.getCategories()
+    const data = await api.getCategories()
+    dailyCat.value = data.find(c => c.is_daily_challenge) || null
+    allOthers.value = data.filter(c => !c.is_daily_challenge)
+    updateDisplay()
   } catch (err) {
     console.error(err)
     errorMsg.value = "Kategoriler yüklenirken hata oluştu."
   }
 })
+
+const shuffleCategories = () => {
+  if (allOthers.value.length === 0) return
+  otherIndex.value = (otherIndex.value + 3) % allOthers.value.length
+  updateDisplay()
+}
+
+const updateDisplay = () => {
+  let toShow = []
+  if (allOthers.value.length > 0) {
+    for(let i=0; i<3; i++) {
+        toShow.push(allOthers.value[(otherIndex.value + i) % allOthers.value.length])
+    }
+    toShow = [...new Set(toShow)]
+  }
+  
+  let combined = []
+  if (dailyCat.value) combined.push(dailyCat.value)
+  categories.value = combined.concat(toShow)
+}
 
 const startGame = async (categoryId) => {
   loading.value = true
@@ -90,6 +116,12 @@ const startGame = async (categoryId) => {
           {{ cat.is_daily_challenge ? 'Özel Etkinlik' : 'Hızlı Test' }}
         </span>
       </div>
+    </div>
+
+    <div v-if="allOthers.length > 3" class="shuffle-container">
+      <button @click="shuffleCategories" class="btn-shuffle">
+        🔄 Başka Kategoriler Getir
+      </button>
     </div>
 
     <div class="footer-link">
@@ -199,6 +231,28 @@ const startGame = async (categoryId) => {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 700;
+}
+
+.shuffle-container {
+  margin-bottom: 2rem;
+}
+
+.btn-shuffle {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 14px 32px;
+  border-radius: 30px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-shuffle:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
 }
 
 .footer-link {
